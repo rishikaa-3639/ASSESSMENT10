@@ -28,12 +28,11 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
-                        def customImage = docker.image("Rishikaa3639/equipment-monitor:${env.BUILD_NUMBER}")
-                        customImage.build()
-                        customImage.push()
-                        customImage.push("latest")
-                    }
+                    // Uses your local Docker CLI session
+                    bat "docker build -t rishikaa-3639/equipment-monitor:${env.BUILD_NUMBER} ."
+                    bat "docker tag rishikaa-3639/equipment-monitor:${env.BUILD_NUMBER} rishikaa-3639/equipment-monitor:latest"
+                    bat "docker push rishikaa-3639/equipment-monitor:${env.BUILD_NUMBER}"
+                    bat "docker push rishikaa-3639/equipment-monitor:latest"
                 }
             }
         }
