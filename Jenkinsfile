@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
-                        def customImage = docker.image("rishikaa-3639/equipment-monitor:${env.BUILD_NUMBER}")
+                        def customImage = docker.image("Rishikaa3639/equipment-monitor:${env.BUILD_NUMBER}")
                         customImage.build()
                         customImage.push()
                         customImage.push("latest")
