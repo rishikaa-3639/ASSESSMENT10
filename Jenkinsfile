@@ -14,13 +14,13 @@ pipeline {
                 stage('Validate HTML') {
                     steps {
                         echo "Validating HTML structure..."
-                        sh 'test -f index.html'
+                        bat 'if not exist index.html exit 1'
                     }
                 }
                 stage('Check Dockerfile') {
                     steps {
                         echo "Checking Dockerfile configuration..."
-                        sh 'test -f Dockerfile'
+                        bat 'if not exist Dockerfile exit 1'
                     }
                 }
             }
@@ -28,9 +28,8 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                  
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
-                        def customImage = docker.image("dockerhubusername/equipment-monitor:${env.BUILD_NUMBER}")
+                        def customImage = docker.image("rishikaa-3639/equipment-monitor:${env.BUILD_NUMBER}")
                         customImage.build()
                         customImage.push()
                         customImage.push("latest")
@@ -42,12 +41,12 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'kubectl apply -f deployment.yaml'
-                        sh 'kubectl rollout status deployment/equipment-monitor-app'
+                        bat 'kubectl apply -f deployment.yaml'
+                        bat 'kubectl rollout status deployment/equipment-monitor-app'
                     } catch (Exception err) {
                         currentBuild.result = 'FAILURE'
                         echo "Deployment failed! Initiating automated rollback..."
-                        sh 'kubectl rollout undo deployment/equipment-monitor-app'
+                        bat 'kubectl rollout undo deployment/equipment-monitor-app'
                         error("Deployment failed, previous stable version restored.")
                     }
                 }
