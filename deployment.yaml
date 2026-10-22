@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: monitor
-        image: dockerhubusername/equipment-monitor:latest
+        image: Rishikaa3639/equipment-monitor:latest
         ports:
         - containerPort: 80
 ---
