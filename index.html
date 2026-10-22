@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Equipment Monitoring & Predictive Maintenance</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        h1 { color: #003366; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .warning { border-left: 6px solid #d9534f; background: #fdf7f7; }
+        .normal { border-left: 6px solid #5cb85c; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #003366; color: white; }
+        .badge-high { background: #d9534f; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .badge-med { background: #f0ad4e; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .filters { margin-bottom: 15px; }
+        select, input { padding: 8px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <h1>Industrial Equipment Monitoring Dashboard</h1>
+    
+    <!-- Analytics Summary Cards -->
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>Total Operational Machines</h3>
+            <p id="operational-count" style="font-size: 24px; font-weight: bold; color: #5cb85c;">4 / 5</p>
+        </div>
+        <div class="card">
+            <h3>Total System Downtime</h3>
+            <p style="font-size: 24px; font-weight: bold; color: #d9534f;">14.5 Hours</p>
+        </div>
+        <div class="card warning">
+            <h3>Highest Maintenance Risk</h3>
+            <p style="font-weight: bold;">Machine M-003 (Hydraulic Press)</p>
+            <p style="font-size: 13px; color: #d9534f;">Temp: 85°C | Vibration: 6.2 mm/s</p>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters">
+        <label for="statusFilter">Filter Status:</label>
+        <select id="statusFilter" onchange="filterTable()">
+            <option value="ALL">All Statuses</option>
+            <option value="Operational">Operational</option>
+            <option value="Warning">Warning / Critical</option>
+        </select>
+
+        <label for="unitFilter">Production Unit:</label>
+        <select id="unitFilter" onchange="filterTable()">
+            <option value="ALL">All Units</option>
+            <option value="Unit A">Unit A</option>
+            <option value="Unit B">Unit B</option>
+            <option value="Unit C">Unit C</option>
+        </select>
+    </div>
+
+    <!-- Equipment Status Table -->
+    <h2>Equipment Telemetry Data</h2>
+    <table id="equipmentTable">
+        <thead>
+            <tr>
+                <th>Machine ID</th>
+                <th>Production Unit</th>
+                <th>Operating Hours</th>
+                <th>Temperature (°C)</th>
+                <th>Vibration (mm/s)</th>
+                <th>Operational Status</th>
+                <th>Maintenance Due</th>
+                <th>Recent Downtime</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="normal" data-status="Operational" data-unit="Unit A">
+                <td>M-001</td>
+                <td>Unit A</td>
+                <td>4,200 hrs</td>
+                <td>68°C</td>
+                <td>2.1 mm/s</td>
+                <td>Operational</td>
+                <td>2026-06-15</td>
+                <td>1.2 hrs</td>
+            </tr>
+            <tr class="normal" data-status="Operational" data-unit="Unit A">
+                <td>M-002</td>
+                <td>Unit A</td>
+                <td>3,850 hrs</td>
+                <td>72°C</td>
+                <td>3.0 mm/s</td>
+                <td>Operational</td>
+                <td>2026-05-20</td>
+                <td>0.5 hrs</td>
+            </tr>
+            <tr class="warning" data-status="Warning" data-unit="Unit B">
+                <td><strong>M-003</strong></td>
+                <td>Unit B</td>
+                <td>6,100 hrs</td>
+                <td><strong>85°C ⚠️</strong></td>
+                <td><strong>6.2 mm/s ⚠️</strong></td>
+                <td><span style="color:red; font-weight:bold;">Warning</span></td>
+                <td>2026-03-01 (Overdue)</td>
+                <td>8.0 hrs</td>
+            </tr>
+            <tr class="normal" data-status="Operational" data-unit="Unit C">
+                <td>M-004</td>
+                <td>Unit C</td>
+                <td>2,100 hrs</td>
+                <td>65°C</td>
+                <td>1.8 mm/s</td>
+                <td>Operational</td>
+                <td>2026-09-10</td>
+                <td>0.0 hrs</td>
+            </tr>
+            <tr class="warning" data-status="Warning" data-unit="Unit C">
+                <td><strong>M-005</strong></td>
+                <td>Unit C</td>
+                <td>5,400 hrs</td>
+                <td><strong>82°C ⚠️</strong></td>
+                <td>4.5 mm/s</td>
+                <td><span style="color:red; font-weight:bold;">Warning</span></td>
+                <td>2026-03-12</td>
+                <td>4.8 hrs</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Maintenance Priority Table -->
+    <h2 style="margin-top: 30px;">Maintenance Priority & Action Recommendations</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Priority</th>
+                <th>Machine ID</th>
+                <th>Severity</th>
+                <th>Recommended Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>M-003</td>
+                <td><span class="badge-high">High</span></td>
+                <td>Immediate shutdown. Inspect bearings and replace hydraulic fluid coolant.</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>M-005</td>
+                <td><span class="badge-med">Medium</span></td>
+                <td>Schedule thermal inspection during next shift change window.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function filterTable() {
+            let status = document.getElementById('statusFilter').value;
+            let unit = document.getElementById('unitFilter').value;
+            let rows = document.querySelectorAll('#equipmentTable tbody tr');
+
+            rows.forEach(row => {
+                let rowStatus = row.getAttribute('data-status');
+                let rowUnit = row.getAttribute('data-unit');
+                
+                let matchesStatus = (status === 'ALL' || rowStatus === status);
+                let matchesUnit = (unit === 'ALL' || rowUnit === unit);
+
+                if (matchesStatus && matchesUnit) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
